@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PlantManagerAPI.Infrastructure;
+using PlantManagerAPI.Infrastructure.Repositories;
+using PlantManagerAPI.Infrastructure.Repositories.CompanyRepositories;
 using PlantManagerAPI.Models;
 using PlantManagerAPI.Models.Company;
 
@@ -21,46 +23,41 @@ namespace PlantManagerAPI.Controllers
     {
         private readonly PlantManagerContext _context;
         private readonly ILogger<PlantsController> _logger;
+        private readonly IGenericRepository<PlantModel> _plantRepository;
 
-        public PlantsController(PlantManagerContext context, ILogger<PlantsController> logger)
+        public PlantsController(ILogger<PlantsController> logger, IGenericRepository<PlantModel> plantRepository)
         {
-
-            _context = context;
             _logger = logger;
-            if (_context.Plants.Any())
-            {
-                return;
-            }
-
-            PlantSeed.InitData(context);
+            _plantRepository = plantRepository;
         }
 
         [HttpGet]
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IQueryable<Plant>> GetPlants([FromQuery] string name,[FromQuery] APIRequestSize request)
+        public async Task<ActionResult<IQueryable<PlantModel>>> GetPlants([FromQuery] string name,[FromQuery] APIRequestSize request)
         {
-            var result = _context.Plants as IQueryable<Plant>;
+            var res = await _plantRepository.GetAllAsync();
 
-            Response.Headers["x-total-count"] = result.Count().ToString();
+
+            Response.Headers["x-total-count"] = res.Count().ToString();
 
             if (!string.IsNullOrEmpty(name))
             {
-                result = result.Where(p => p.Name.StartsWith(name, StringComparison.InvariantCultureIgnoreCase));
+                res = res.Where(p => p.Name.StartsWith(name, StringComparison.InvariantCultureIgnoreCase));
             }
 
             if (request.Limit >=100)
             {
                 _logger.LogInformation("Requesting more thant 100 plants");
             }
-
-            return Ok(result.OrderBy(p => p.PlantId).Skip(request.Offset).Take(request.Limit));
+            //return Ok();
+            return Ok(res.OrderBy(p => p.PlantId).Skip(request.Offset).Take(request.Limit));
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<Plant> PostPlant([FromBody] Plant plant)
+        public ActionResult<PlantModel> PostPlant([FromBody] PlantModel plant)
         {
             try
             {
@@ -82,7 +79,7 @@ namespace PlantManagerAPI.Controllers
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Plant> GetPlantById([FromRoute]string id)
+        public ActionResult<PlantModel> GetPlantById([FromRoute]string id)
         {
             var plantDb = _context.Plants.FirstOrDefault(p => p.PlantId.ToString().Equals(id, StringComparison.InvariantCultureIgnoreCase));
 
@@ -100,7 +97,7 @@ namespace PlantManagerAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<Plant> PutPlant([FromBody] Plant plant)
+        public ActionResult<PlantModel> PutPlant([FromBody] PlantModel plant)
         {
             try
             {
@@ -136,7 +133,7 @@ namespace PlantManagerAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<Plant> DeletePlant([FromRoute] string id)
+        public ActionResult<PlantModel> DeletePlant([FromRoute] string id)
         {
 
             var noPlants = _context.Plants.Count();

@@ -156,7 +156,7 @@ namespace PlantManagerAPI.Controllers
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Plant> DeleteMachine([FromRoute] string id)
+        public ActionResult<PlantModel> DeleteMachine([FromRoute] string id)
         {
             var noMachines = _context.Machines.Count();
             if (noMachines == 1)

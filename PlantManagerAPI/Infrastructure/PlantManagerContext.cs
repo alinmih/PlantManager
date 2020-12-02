@@ -14,7 +14,7 @@ namespace PlantManagerAPI.Infrastructure
         {
         }
 
-        public DbSet<Plant> Plants { get; set; }
+        public DbSet<PlantModel> Plants { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<CostCenter> CostCenters { get; set; }
         public DbSet<Machine> Machines { get; set; }

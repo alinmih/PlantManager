@@ -145,7 +145,7 @@ namespace PlantManagerAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<Plant> DeleteDepartment([FromRoute] string id)
+        public ActionResult<PlantModel> DeleteDepartment([FromRoute] string id)
         {
             var noDepartments = _context.Departments.Count();
             if (noDepartments == 1)

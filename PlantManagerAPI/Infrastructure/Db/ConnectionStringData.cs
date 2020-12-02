@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace PlantManagerAPI.Infrastructure.Db
 {
-    public class ConnectionStringData
+    public static class ConnectionStringData
     {
-        public string SqlConnectionName { get; set; } = "WebApiDatabase";
+        public static string SqlConnectionName { get; set; } = "WebApiDatabase";
     }
 }

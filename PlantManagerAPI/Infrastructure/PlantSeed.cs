@@ -24,7 +24,7 @@ namespace PlantManagerAPI.Infrastructure
 
             context.Plants.AddRange(2.Times(x =>
             {
-                var plant = new Plant
+                var plant = new PlantModel
                 {
                     PlantId = id,
                     Name = $"Plant {id}",

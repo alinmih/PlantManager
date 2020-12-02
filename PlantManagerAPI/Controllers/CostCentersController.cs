@@ -149,7 +149,7 @@ namespace PlantManagerAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<Plant> DeletecostCenter([FromRoute] string id)
+        public ActionResult<PlantModel> DeletecostCenter([FromRoute] string id)
         {
             var noCostCenter = _context.CostCenters.Count();
             if (noCostCenter == 1)

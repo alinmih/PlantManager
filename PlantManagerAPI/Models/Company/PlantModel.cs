@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PlantManagerAPI.Models.Company
 {
-    public class Plant
+    public class PlantModel
     {
         [Key]
         [Required]

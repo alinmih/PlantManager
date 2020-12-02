@@ -13,16 +13,19 @@ namespace PlantManagerAPI.Infrastructure.Db
     {
         private readonly IConfiguration _configuration;
 
+        private readonly string _cnnString;
+
         public SqlDb(IConfiguration configuration)
         {
             _configuration = configuration;
+            _cnnString = _configuration.GetConnectionString(ConnectionStringData.SqlConnectionName);
         }
 
-        public async Task<List<T>> LoadData<T, U>(string storedProcedure, U parameters, string connectionStringName)
-        {
-            string connectionString = _configuration.GetConnectionString(connectionStringName);
 
-            using (IDbConnection connection = new SqlConnection(connectionString))
+        public async Task<List<T>> LoadData<T, U>(string storedProcedure, U parameters)
+        {
+
+            using (IDbConnection connection = new SqlConnection(_cnnString))
             {
                 var rows = await connection.QueryAsync<T>(storedProcedure,
                                                           parameters,
@@ -31,11 +34,10 @@ namespace PlantManagerAPI.Infrastructure.Db
             }
         }
 
-        public async Task<int> SaveData<T>(string storedProcedure, T parameters, string connectionStringName)
-        {
-            string connectionString = _configuration.GetConnectionString(connectionStringName);
 
-            using (IDbConnection connection = new SqlConnection(connectionString))
+        public async Task<int> SaveData<T>(string storedProcedure, T parameters)
+        {
+            using (IDbConnection connection = new SqlConnection(_cnnString))
             {
                 return await connection.ExecuteAsync(storedProcedure,
                                                      parameters,

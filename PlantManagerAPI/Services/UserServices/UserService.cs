@@ -17,13 +17,10 @@ namespace PlantManagerAPI.Services.UserServices
     public class UserService : IUserService
     {
         private readonly IDataAccess _dataAccess;
-        private readonly ConnectionStringData _connectionString;
 
-        public UserService(IDataAccess dataAccess, ConnectionStringData connectionString)
+        public UserService(IDataAccess dataAccess)
         {
-
             _dataAccess = dataAccess;
-            _connectionString = connectionString;
         }
 
         public async Task<User> Authenticate(string username, string password)
@@ -53,7 +50,7 @@ namespace PlantManagerAPI.Services.UserServices
 
         public async Task<IEnumerable<User>> GetAll()
         {
-            return await _dataAccess.LoadData<User, dynamic>("UserManagementSelect", new User(), _connectionString.SqlConnectionName);
+            return await _dataAccess.LoadData<User, dynamic>("UserManagementSelect", new User());
         }
 
         public async Task<User> GetById(int id)
@@ -91,7 +88,7 @@ namespace PlantManagerAPI.Services.UserServices
             p.Add("PasswordSalt", user.PasswordSalt);
             p.Add("Id", DbType.Int32, direction: ParameterDirection.Output);
 
-            await _dataAccess.SaveData("UserManagementInsert", user, _connectionString.SqlConnectionName);
+            await _dataAccess.SaveData("UserManagementInsert", user);
             user.Id = p.Get<int>("Id");
 
             return user;
@@ -137,7 +134,7 @@ namespace PlantManagerAPI.Services.UserServices
                 user.PasswordSalt = passwordSalt;
             }
 
-            await _dataAccess.SaveData("UserManagementUpdate", user, _connectionString.SqlConnectionName);
+            await _dataAccess.SaveData("UserManagementUpdate", user);
 
         }
 
@@ -147,21 +144,20 @@ namespace PlantManagerAPI.Services.UserServices
             if (user != null)
             {
                 await _dataAccess.SaveData("UserManagementDelete",
-                                        new { Id = id },
-                                        _connectionString.SqlConnectionName);
+                                        new { Id = id });
             }
         }
 
         private async Task<User> GetUserHelper(string username)
         {
-            var users = await _dataAccess.LoadData<User, dynamic>("UserManagementSelect", new User(){ Username = username }, _connectionString.SqlConnectionName);
+            var users = await _dataAccess.LoadData<User, dynamic>("UserManagementSelect", new User(){ Username = username });
             var user = users.FirstOrDefault();
             return user;
         }
 
         private async Task<User> GetUserHelper(int id)
         {
-            var users = await _dataAccess.LoadData<User, dynamic>("UserManagementSelect", new User() { Id=id}, _connectionString.SqlConnectionName);
+            var users = await _dataAccess.LoadData<User, dynamic>("UserManagementSelect", new User() { Id=id});
             var user = users.FirstOrDefault();
             return user;
         }

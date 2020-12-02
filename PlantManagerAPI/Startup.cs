@@ -17,7 +17,10 @@ using Microsoft.OpenApi.Models;
 using PlantManagerAPI.Helpers;
 using PlantManagerAPI.Infrastructure;
 using PlantManagerAPI.Infrastructure.Db;
+using PlantManagerAPI.Infrastructure.Repositories;
+using PlantManagerAPI.Infrastructure.Repositories.CompanyRepositories;
 using PlantManagerAPI.Models;
+using PlantManagerAPI.Models.Company;
 using PlantManagerAPI.Services;
 using PlantManagerAPI.Services.UserServices;
 
@@ -109,11 +112,10 @@ namespace PlantManagerAPI
                         ValidateAudience = false
                     };
                 });
-            services.AddSingleton(new ConnectionStringData
-            {
-                SqlConnectionName = "WebApiDatabase"
-            });
+
+
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IGenericRepository<PlantModel>, PlantRepository>();
             services.AddSingleton<IDataAccess, SqlDb>();
         }
 
